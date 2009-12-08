@@ -240,8 +240,8 @@ div#footer a {
 div#header div#blog-description {
 	font-size:.9em;
 	letter-spacing:.1em;
-	margin:1em 0;
-	padding:0 .5em;
+	margin:10px 0 0 35px;
+	padding:0;
 	float:left;
 }
 
@@ -1035,8 +1035,9 @@ span.edit-link {
 
 #search-question-wrap {
 	border-bottom:1px solid #224477;
-	margin:20px 0;
-	padding:0 0 20px;
+	border-top:1px solid #224477;
+	margin:20px 0 0;
+	padding:0;
 }
 
 #search-box {
@@ -1044,13 +1045,29 @@ span.edit-link {
 	width:49%;
 }
 
+#searchbox {
+	margin:20px 0;
+	padding:0;
+}
+
 #search-box h2,#question-box h2 {
 	margin:0 0 10px;
 }
 
 #question-box {
+	border-left:1px solid #224477;
 	float:right;
 	width:49%;
+}
+
+#ask-submit {
+	float:right;
+	margin-right:20px;
+}
+
+#postbox {
+	margin:20px 0 40px 20px;
+	padding:0;
 }
 
 #accordion1 {
@@ -1058,9 +1075,24 @@ span.edit-link {
 	width:49%;
 }
 
+#accordion-wrap {
+	margin:20px 0;
+}
+
+#accordion1box {
+	margin:0 0 20px;
+	padding:0;
+}
+
 #accordion2 {
+	border-left:1px solid #224477;
 	float:right;
 	width:49%;
+}
+
+#accordion2box {
+	margin:0 0 20px 20px;
+	padding:0;
 }
 
 #searchform .button,.postrow input {

@@ -99,6 +99,7 @@ jQuery(document).ready(function(){
 
 <div id="search-question-wrap">
 <div id="search-box">
+<div id="searchbox">
 <h2>Search Answers</h2>
 	<form id="searchform" class="blog-search" method="get" action="<?php bloginfo('home') ?>">
 		<div>
@@ -106,6 +107,7 @@ jQuery(document).ready(function(){
 			<input type="submit" class="button" value="Search" tabindex="2" />
 		</div>
 	</form>
+</div><!-- #searchbox -->
 </div><!-- #search-box -->
 
 <div id="question-box">
