@@ -12,27 +12,6 @@ get_header();
 
 <?php query_posts( 'category_name=' . GURUQ_CAT . '&posts_per_page=20' ); ?>
 
-<script type="text/javascript">
-var $j = jQuery.noConflict();
-jQuery(document).ready(function(){
-	$j(function() {
-		$j("#accordion1").accordion({ 
-			header: 'h3', 
-			autoHeight: false, 
-			collapsible: true, 
-			active: false 
-		});
-		
-		$j("#accordion2").accordion({ 
-			header: 'h3', 
-			autoHeight: false, 
-			collapsible: true, 
-			active: false 
-		});
-	});
-});
-</script>
-
 <div id="accordion-wrap">
 <div id="accordion2">
 <h2><?php echo __( 'Featured' );?></h2>
