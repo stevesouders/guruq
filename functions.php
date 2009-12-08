@@ -859,3 +859,16 @@ function guruq_delete_from_queue( $post_id ) {
 	}
 }
 add_action( 'publish_post', 'guruq_delete_from_queue' );
+
+function guruq_bulk_delete() {
+	if ( 'delete' == $_POST['bulk_action'] ) {
+		$keys = $_POST['bulk'];
+
+		foreach ( (array) $keys AS $key ) {
+			delete_option( $key );
+		}
+	}
+}
+if ( isset( $_POST['action'] ) && 'bulk_blogs' == $_POST['action'] ) {
+	guruq_bulk_delete();
+}

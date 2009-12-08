@@ -5,7 +5,7 @@
 		<?php wp_nonce_field( 'new-post' ); ?>
 		<div class="inputarea">
 			<textarea name="posttext" id="posttext" tabindex="3" rows="3" cols="20"><?php if ( isset( $_POST['posttext'] ) ) echo stripslashes( $_POST['posttext'] ); ?></textarea>
-			<input id="ask-submit" type="submit" tabindex="4" value="Ask" />
+			<input class="button" id="ask-submit" type="submit" tabindex="4" value="Ask" />
 
 			<div id="guruq-email">
 				<p>Would you like to be notified when the Guru answers your question?</p>

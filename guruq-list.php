@@ -29,8 +29,19 @@ $posts = guruq_get_queue( $post_args );
 ?>
 
 <?php if ( !empty( $posts ) ) { ?>
+<form method="post" action="">
+	<input type="hidden" name="action" value="bulk_blogs"/>
 
 <div class="tablenav">
+		<div class="alignleft actions">
+			<select name="bulk_action">
+				<option value="-1" selected="selected"><?php _e( 'Bulk Actions' ); ?></option>
+				<option value="delete"><?php _e( 'Delete' ); ?></option>
+			</select>
+
+			<input type="submit" value="<?php _e( 'Apply' ); ?>" id="doaction" class="button-secondary action" />
+ 		</div><!-- .alignleft .actions -->
+
 <?php
 $page_links = paginate_links( array(
 	'base'      => add_query_arg( 'pagenum', '%#%' ),
@@ -52,16 +63,18 @@ $page_link_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&
 );
 echo $page_link_text; 
 ?>
-</div>
+</div><!-- #tablenav-pages -->
 <?php } ?>
 
 <div class="clear"></div>
-</div>
+</div><!-- #tablenav -->
 
 <div class="clear"></div>
 <?php
 $theaders = array( 'Title', 'Date', 'Author' );
 $thead = '';
+$thead .= '<th class="manage-column column-cb check-column"><input type="checkbox" /></th>';
+
 foreach ( $theaders as $label ) {
 	$thead .= "<th scope='row'>$label</th>";
 }
@@ -86,6 +99,7 @@ foreach ( $posts as $post ) {
 	$delete_link = add_query_arg( 'action', 'delete', $_SERVER['REQUEST_URI'] );
 	$delete_link = add_query_arg( 'guruq', $key, $delete_link );
 	$out .= "<tr>";
+	$out .= '<th class="check-column"><input type="checkbox" class="bulk" name="bulk[]" value="' . $key . '" /></th>';
 	$out .= "<td>$o->post_title<br>
 	<a href='$edit_link'>Edit</a> | 
 	<a href='$delete_link'>Delete</a>
@@ -99,6 +113,14 @@ echo $out;
 	</tbody>
 </table>
 <div class="tablenav">
+		<div class="alignleft actions">
+			<select name="bulk_action">
+				<option value="-1" selected="selected"><?php _e( 'Bulk Actions' ); ?></option>
+				<option value="delete"><?php _e( 'Delete' ); ?></option>
+			</select>
+
+			<input type="submit" value="<?php _e( 'Apply' ); ?>" id="doaction" class="button-secondary action" />
+ 		</div><!-- .alignleft .actions -->
 
 <?php
 if ( $page_links )
@@ -114,3 +136,4 @@ if ( $page_links )
 <div id="ajax-response"></div>
 <br class="clear" />
 </div>
+</form>
