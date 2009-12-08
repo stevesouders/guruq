@@ -24,24 +24,27 @@ wp_enqueue_script( 'accordion', get_bloginfo( 'template_directory' ) . '/ui.acco
 	<div id="header">
 		<h1 id="blog-title"><span><a href="<?php bloginfo('home') ?>/" title="<?php echo wp_specialchars( get_bloginfo('name'), 1 ) ?>" rel="home"><?php bloginfo('name') ?></a></span></h1>
 		<div id="blog-description"><?php bloginfo('description') ?></div>
+		<div class="clearer"></div>
+
 	</div><!--  #header -->
 
-	<div id="access">
-		<div class="skip-link"><a href="#content" title="<?php _e( 'Skip to content', 'sandbox' ) ?>"><?php _e( 'Skip to content', 'sandbox' ) ?></a></div>
-		<?php sandbox_globalnav() ?>
-	</div><!-- #access -->
-
-<div id="search-wrap">
-<div id="header-search">
+<div id="search-question-wrap">
+<div id="search-box">
+<h2>Search Answers</h2>
 	<form id="searchform" class="blog-search" method="get" action="<?php bloginfo('home') ?>">
 		<div>
-			<input type="text" value="Search" name="s" id="s" onfocus="this.value=(this.value=='Search') ? '' : this.value;" onblur="this.value=(this.value=='') ? 'Search' : this.value;" />
-			<input type="submit" class="button" value="Go" tabindex="2" />
+			<input type="text" value="<?php the_search_query(); ?>" name="s" id="s" /><br />
+			<input type="submit" class="button" value="Search" tabindex="2" />
 		</div>
 	</form>
-</div><!-- #header-search -->
-<div id="header-rssfeed">
-	<img id="rss-icon" src="<?php echo get_bloginfo( 'template_directory' ); ?>/images/feed.png" width="10" height="10" border="0" />
-	<a id="rss-link" href="<?php bloginfo( 'rss2_url' ) ?>" title="<?php printf( __( '%s latest posts', 'sandbox' ), wp_specialchars( get_bloginfo( 'name' ), 1 ) ) ?>" rel="alternate" type="application/rss+xml"><?php _e( 'RSS Feed', 'sandbox' ) ?></a>
-</div><!-- #header-feed -->
-</div><!-- #search-wrap -->
+</div><!-- #search-box -->
+
+<div id="question-box">
+<?php 
+guruq_new_post();
+require_once dirname( __FILE__ ) . '/post-form.php'; 
+?>
+</div><!-- #question-box -->
+<div class="clearer"></div>
+
+</div><!-- #search-question-wrap -->

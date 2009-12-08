@@ -130,10 +130,6 @@ div.hentry div.entry-content span.underline {
 	text-decoration:underline;
 }
 
-div#footer,body.single div#content div#nav-above,div#content .page-title,div.hentry div.entry-content table tbody th {
-	background:#f5f5f5;
-}
-
 div#comments div.comments ol {
 	list-style:none;
 }
@@ -182,7 +178,6 @@ div#comments-list ol li div.comment-meta {
 
 div#content {
 	background:#fcfdfe;
-	border-top:3px solid #247;
 	padding-bottom:1em;
 }
 
@@ -206,7 +201,7 @@ div#content .page-title {
 div#content div#nav-below {
 	font-size:1.3em;
 	height:2em;
-	margin:-1em 0 0;
+	margin:1em 0 0;
 	padding:0 .2em;
 }
 
@@ -247,16 +242,14 @@ div#header div#blog-description {
 	letter-spacing:.1em;
 	margin:1em 0;
 	padding:0 .5em;
-	background:#f5f5f5;
-}
-
-div#header h1#blog-title a {
-	background:#e5e5e5;
+	float:left;
 }
 
 div#header h1#blog-title {
 	display:inline;
 	font:normal 3em/100% arial,helvetica,sans-serif;
+	width:49%;
+	float:left;
 }
 
 div#header h1#blog-title a {
@@ -747,14 +740,11 @@ span.edit-link {
 }
 
 #postbox .inputarea {
-	border-bottom:3px solid #224477;
 	height:100%;
-	padding-bottom:30px;
-	padding-left:60px;
 }
 
 form#new_post {
-	margin-top:20px;
+	margin-top:0;
 }
 
 #postbox label {
@@ -792,7 +782,6 @@ h1,h2,h3,#postbox label,#help dd {
 	border:1px solid;
 	font-size:13px;
 	margin-bottom:6px;
-	padding:5px 7px;
 	width:96%;
 }
 
@@ -1036,4 +1025,45 @@ p.important {
 span.edit-link {
 	background:url(images/edit.png) no-repeat left center;
 	padding:0 .5em 0 13px;
+}
+
+#searchform #s {
+	width:96%;
+	margin:0 0 6px;
+	font-size:30px;
+}
+
+#search-question-wrap {
+	border-bottom:1px solid #224477;
+	margin:20px 0;
+	padding:0 0 20px;
+}
+
+#search-box {
+	float:left;
+	width:49%;
+}
+
+#search-box h2, #question-box h2 {
+	margin: 0 0 10px 0;
+}
+
+#question-box {
+	float:right;
+	width:49%;
+}
+
+#accordion1 {
+	float:left;
+	width:49%;
+}
+
+#accordion2 {
+	float:right;
+	width:49%;
+}
+
+#searchform .button,.postrow input {
+	float:right;
+	margin-right:20px;
 }
