@@ -15,6 +15,75 @@ wp_enqueue_script( 'accordion', get_bloginfo( 'template_directory' ) . '/ui.acco
 ?>
 <link type="text/css" href="<?php echo get_bloginfo( 'template_directory' ); ?>/ui-lightness/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
 	<?php wp_head() ?>
+
+<script type="text/javascript">
+//<![CDATA[
+var $j = jQuery.noConflict();
+jQuery(document).ready(function(){
+	$j(function() {
+		$j("#accordion1").accordion({ 
+			header: 'h3', 
+			autoHeight: false, 
+			collapsible: true, 
+			active: false 
+		});
+		
+		$j("#accordion2").accordion({ 
+			header: 'h3', 
+			autoHeight: false, 
+			collapsible: true, 
+			active: false 
+		});
+	});
+
+	$j("#ask-submit").click(function() { 
+		var dataString = 'posttext=' + $j("#posttext").val();
+		//alert (dataString);return false;
+
+		$j('#ask-submit').fadeOut('normal');
+		$j('#posttext').fadeOut('normal');
+		$j('#postbox h2').fadeOut('normal');
+
+		$j.ajax({
+			type: "POST",
+			url: "?action=post",
+			data: dataString,
+			success: function( data, status ) {
+				var guruq_key = data;
+				$j("#guruq_key").val(data);
+
+				$j('#guruq-email').fadeIn('normal');
+			}
+		  });
+		  
+		return false;
+	});
+
+
+	$j("#email-submit").click(function() { 
+		var dataString = 'guruq-name=' + $j("#notify-name").val() + '&guruq-email=' + $j("#notify-email").val() + '&guruq_key=' + $j("#guruq_key").val();
+		//alert (dataString);return false;
+
+		$j.ajax({
+			type: "POST",
+			url: "?action=notify",
+			data: dataString,
+			success: function() {
+				$j('#guruq-email').html("<div id='message'></div>");
+				$j('#message').html("<p>Thank you!</p>");
+				$j('#notify-name').fadeOut('normal');
+				$j('#notify-email').fadeOut('normal');
+				$j('#email-submit').fadeOut('normal');
+			}
+		  });
+
+		return false;
+	});
+
+});
+//]]>
+</script>
+
 </head>
 
 <body class="<?php sandbox_body_class() ?>">
@@ -41,7 +110,6 @@ wp_enqueue_script( 'accordion', get_bloginfo( 'template_directory' ) . '/ui.acco
 
 <div id="question-box">
 <?php 
-guruq_new_post();
 require_once dirname( __FILE__ ) . '/post-form.php'; 
 ?>
 </div><!-- #question-box -->

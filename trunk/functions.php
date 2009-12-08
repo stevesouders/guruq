@@ -521,28 +521,42 @@ define( 'GURUQ_FEAT_ID', guruq_check_category( GURUQ_FEAT_CAT ) );
  * Add new question into the queue
  */
 function guruq_new_post() {
-	if( 'POST' != $_SERVER['REQUEST_METHOD'] || empty( $_POST['action'] ) || $_POST['action'] != 'post' )
-	    return;
+	if( isset( $_GET['action'] ) && 'post' == $_GET['action'] ) {
+		$post_content = $_POST['posttext'];
+		if ( empty( $post_content ) )
+			return;
 
-	$post_content = $_POST['posttext'];
-	if ( empty( $post_content ) )
-		return;
+		$post_title = guruq_title_from_content( $post_content );
 
-	$post_title = guruq_title_from_content( $post_content );
-	
-	$post = new stdClass();
-	$post->post_title = $post_title;
-	$post->post_date = current_time( 'mysql' );
-	$post->post_content = $post_content;
-	$post->author_name = 'Anonymous';
-	$post->author_email = '';
-	$key = 'guruq_' . md5( $post->post_date . '-' . $post->post_title );
-	add_option( $key, $post );
+		$post = new stdClass();
+		$post->post_title = $post_title;
+		$post->post_date = current_time( 'mysql' );
+		$post->post_content = $post_content;
+		$post->author_name = 'Anonymous';
+		$post->author_email = '';
+		$key = 'guruq_' . md5( $post->post_date . '-' . $post->post_title );
+		add_option( $key, $post );
 
-	wp_redirect( get_bloginfo( 'url' ) . '/' );
-	
-	exit;
+		echo $key;
+		exit;
+	}
+
+	if( isset( $_GET['action'] ) && 'notify' == $_GET['action'] ) {
+		$name = stripslashes( strip_tags( $_POST['guruq-name'] ) );
+		$email = stripslashes( strip_tags( $_POST['guruq-email'] ) );
+		$guruq_key = $_POST['guruq_key'];
+
+		if ( $post = get_option( $guruq_key ) ) {
+			$post->author_name = $name;
+			$post->author_email = $email;
+			update_option( $guruq_key, $post );
+		}
+		exit;
+	}
+//exit;
+
 }
+guruq_new_post();
 
 /**
  * Checks if GuruQ category exists, if not, create it, return the ID
@@ -798,7 +812,7 @@ function guruq_get_queue( $args ) {
 	$limit = (int) $args['limit'];
 	$offset = (int) $args['offset'];
 
-	$sql = $wpdb->prepare( "SELECT option_name, option_value FROM $wpdb->options WHERE option_name LIKE %s ORDER BY option_id ASC LIMIT %d,%d", 'guruq_%', $offset, $limit );
+	$sql = $wpdb->prepare( "SELECT option_name, option_value FROM $wpdb->options WHERE option_name LIKE %s ORDER BY option_id DESC LIMIT %d,%d", 'guruq_%', $offset, $limit );
 	return $wpdb->get_results( $sql );
 }
 
