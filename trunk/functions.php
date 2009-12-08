@@ -511,51 +511,53 @@ add_filter( 'archive_meta', 'wpautop' );
 
 define( 'GURUQ_CAT', 'GuruQ Questions' );
 define( 'GURUQ_SLUG', 'guruq-questions' );
+define( 'GURUQ_ID', guruq_check_category( GURUQ_CAT ) );
+
+define( 'GURUQ_FEAT_CAT', 'GuruQ Featured Questions' );
+define( 'GURUQ_FEAT_SLUG', 'guruq-featured-questions' );
+define( 'GURUQ_FEAT_ID', guruq_check_category( GURUQ_FEAT_CAT ) );
 
 /**
- * Handles inserting questions from the postbox, automatically categorizes them as guruq
+ * Add new question into the queue
  */
 function guruq_new_post() {
 	if( 'POST' != $_SERVER['REQUEST_METHOD'] || empty( $_POST['action'] ) || $_POST['action'] != 'post' )
 	    return;
 
-	if ( !is_user_logged_in() )
-		auth_redirect();
-
-	if( !current_user_can( 'publish_posts' ) ) {
-		wp_redirect( get_bloginfo( 'url' ) . '/' );
-		exit;
-	}
-
-	check_admin_referer( 'new-post' );
-
-	$user_id = $current_user->user_id;
 	$post_content = $_POST['posttext'];
+	if ( empty( $post_content ) )
+		return;
 
 	$post_title = guruq_title_from_content( $post_content );
-
-	// Include the taxonomy api so we can check if category exists	
-	require_once( ABSPATH . '/wp-admin/includes/taxonomy.php' );
-	$guruq_cat_id = (int) category_exists( GURUQ_CAT );
-	// cat_id = 0 means it doesn't exist, so we will create it
-	if ( 0 == $guruq_cat_id )
-		$guruq_cat_id = (int) wp_create_category( GURUQ_CAT );
 	
-	$post_id = wp_insert_post( array(
-		'post_author' => $user_id,
-		'post_title' => $post_title,
-		'post_content' => $post_content,
-		'post_status' => 'draft',
-		'post_type' => 'post',
-		'post_category' => array( $guruq_cat_id ),
-		'comment_status' => 'closed', 
-		'ping_status' => 'closed'
-
-	) );
+	$post = new stdClass();
+	$post->post_title = $post_title;
+	$post->post_date = current_time( 'mysql' );
+	$post->post_content = $post_content;
+	$post->author_name = 'Anonymous';
+	$post->author_email = '';
+	$key = 'guruq_' . md5( $post->post_date . '-' . $post->post_title );
+	add_option( $key, $post );
 
 	wp_redirect( get_bloginfo( 'url' ) . '/' );
 	
 	exit;
+}
+
+/**
+ * Checks if GuruQ category exists, if not, create it, return the ID
+ * 
+ * @return int
+ */
+function guruq_check_category( $cat = GURUQ_CAT ) {
+	// Include the taxonomy api so we can check if category exists	
+	require_once( ABSPATH . '/wp-admin/includes/taxonomy.php' );
+	$cat_id = (int) category_exists( $cat );
+	// cat_id = 0 means it doesn't exist, so we will create it
+	if ( 0 == $cat_id )
+		$cat_id = (int) wp_create_category( $cat );
+
+	return $cat_id;
 }
 
 function guruq_title_from_content( $content ) {
@@ -579,31 +581,14 @@ function guruq_title_from_content( $content ) {
     return $title;
 }
 
-add_action('admin_menu', 'guruq_questions_menu');
+add_action( 'admin_menu', 'guruq_questions_menu' );
 
 /**
- * Adds a sub-menu item in Posts menu
+ * Adds a GuruQ menu to admin sidebar
  */
 function guruq_questions_menu() {
 	global $menu;
 	$name = add_menu_page( 'GuruQ', 'GuruQ', 'administrator', GURUQ_SLUG, 'guruq_edit_page', '' );
-	add_action( 'admin_print_styles', 'guruq_admin_styles' );
-
-/*
-	// Move GuruQ menu closer to the top of the list	
-	foreach ( $menu as $pos => $m ) {
-		if ( 'GuruQ' == $m[0] ) {
-			if ( !isset( $menu[9] ) ) {
-				$menu[9] = $m;
-				unset( $menu[$pos] );
-			}
-		}
-	}
-*/
-}
-
-function guruq_admin_styles() {
-	echo '<link rel="stylesheet" href="' . get_bloginfo('template_directory') .'/admin.css" type="text/css" />' . "\n";
 }
 
 /**
@@ -612,16 +597,6 @@ function guruq_admin_styles() {
 function guruq_edit_page() {
 	include( 'guruq-list.php' );
 }
-
-/**
- * Remove Quick Edit link from post row
- */
-function guruq_remove_post_row_actions( $actions ) {
-	if ( isset( $actions['inline hide-if-no-js'] ) )
-		unset( $actions['inline hide-if-no-js'] );
-	return $actions;
-}
-add_action( 'post_row_actions', 'guruq_remove_post_row_actions' );
 
 /**
  * External API handler
@@ -750,106 +725,28 @@ EOD;
  */
 function guruq_right_now() {
 	$cat = get_category_by_slug( GURUQ_SLUG );
-	$total = (int) $cat->category_count;
-	$link = '<a href="edit.php?page=' . GURUQ_SLUG . '">%s</a>';
+	$total_answered = (int) $cat->category_count;
+	$link_answered = '<a href="edit.php?category_name=' . GURUQ_SLUG . '">%s</a>';
 	$out = '';
 	$out .= '<tr>';
-	$out .= '<td class="first b">' . sprintf( $link, $total ) . '</td>';
-	$out .= '<td class="t">' . sprintf( $link, __( GURUQ_CAT ) ) . '</td>';
+	$out .= '<td class="first b">' . sprintf( $link_answered, $total_answered ) . '</td>';
+	$out .= '<td class="t">' . sprintf( $link_answered, __( GURUQ_CAT ) . ' Answered' ) . '</td>';
 	$out .= '<td class="b"></td>';
 	$out .= '<td class="last t"></td>';
 	$out .= '</tr>';
+
+	$total_pending = guruq_count_queue();
+	$link_pending = '<a href="admin.php?page=' . GURUQ_SLUG . '">%s</a>';
+	$out .= '<tr>';
+	$out .= '<td class="first b">' . sprintf( $link_pending, $total_pending ) . '</td>';
+	$out .= '<td class="t">' . sprintf( $link_pending, __( GURUQ_CAT ) . ' Pending' ) . '</td>';
+	$out .= '<td class="b"></td>';
+	$out .= '<td class="last t"></td>';
+	$out .= '</tr>';
+
 	echo $out;
 }
 add_action( 'right_now_table_end', 'guruq_right_now' );
-
-/**
- * Filter out GuruQ Q's from edit screen
- */
-function guruq_remove_from_edit( $notused = null ) {
-	global $wp_query;
-	$guruq_cat_id = (int) category_exists( GURUQ_CAT );
-	if ( 0 < $guruq_cat_id )
-		$wp_query->query_vars['cat'] = '-' . $guruq_cat_id;
-}
-// Add filter action only on edit page
-if ( strstr( $_SERVER['REQUEST_URI'], 'edit.php' ) && !isset( $_GET['page'] ) && GURUQ_SLUG !== $_GET['page'] ) {
-		add_action( 'pre_get_posts', 'guruq_remove_from_edit' );
-}
-
-/**
- * Remove post_status when not specified in $_GET
- */
-function guruq_remove_post_status( $query ) {
-	if ( isset( $query->query_vars['post_status'] ) )
-		unset( $query->query_vars['post_status'] );
-	return $query;
-}
-
-/**
- * Count number of posts of a post type and is user has permissions to view.
- * This function is similar to wp_count_posts, but takes an extra param for category
- *
- * @param string $type Optional. Post type to retrieve count
- * @param string $perm Optional. 'readable' or empty.
- * @param array $category Optional. Category name
- * @return object Number of posts for each status
- */
-function guruq_count_posts( $type = 'post', $perm = '', $categories = array() ) {
-	global $wpdb;
-
-	if ( !is_array( $categories ) ) {
-		$categories = array( $categories );
-	}
-
-	$user = wp_get_current_user();
-
-	$cat_key = '-' . implode( '-', $categories );
-	$cache_key = $type . $cat_key;
-
-	$cat_join = '';
-	$cat_where = '';
-	if ( !empty( $categories ) ) {
-		$_cat_ids = array();
-		foreach ( $categories as $category ) {
-			$catid = category_exists( $category );
-			if ( $catid )
-				$_cat_ids[] = $catid;
-		}
-		$cat_ids = implode( ',', $_cat_ids );
-		
-		$cat_join = " INNER JOIN $wpdb->term_relationships ON ( $wpdb->posts.ID = $wpdb->term_relationships.object_id ) INNER JOIN $wpdb->term_taxonomy ON ( $wpdb->term_relationships.term_taxonomy_id = $wpdb->term_taxonomy.term_taxonomy_id ) ";
-		$cat_where = "1=1 AND $wpdb->term_taxonomy.taxonomy = 'category' AND $wpdb->term_taxonomy.term_id IN ('$cat_ids') AND ";
-	}
-
-	$query = "SELECT post_status, COUNT( * ) AS num_posts FROM {$wpdb->posts} $cat_join WHERE $cat_where post_type = %s";
-	if ( 'readable' == $perm && is_user_logged_in() ) {
-		if ( !current_user_can("read_private_{$type}s") ) {
-			$cache_key .= '_' . $perm . '_' . $user->ID;
-			$query .= " AND (post_status != 'private' OR ( post_author = '$user->ID' AND post_status = 'private' ))";
-		}
-	}
-	$query .= ' GROUP BY post_status';
-
-	$count = wp_cache_get($cache_key, 'counts');
-	if ( false !== $count )
-		return $count;
-
-	$count = $wpdb->get_results( $wpdb->prepare( $query, $type ), ARRAY_A );
-
-	$stats = array( 'publish' => 0, 'private' => 0, 'draft' => 0, 'pending' => 0, 'future' => 0, 'trash' => 0 );
-	foreach( (array) $count as $row_num => $row ) {
-		$stats[$row['post_status']] = $row['num_posts'];
-	}
-
-	$stats = (object) $stats;
-	wp_cache_set($cache_key, $stats, 'counts');
-
-	$stats = apply_filters( 'count_posts', $stats );
-
-	return $stats;
-}
-
 
 /**
  * Check if post is categorized as GuruQ
@@ -876,15 +773,75 @@ function is_post_guruq( $post_id = null ) {
 	return false;
 }
 
-function guruq_filter_count_posts( $num_posts ) {
-	$guruq_num_posts = guruq_count_posts( 'post', 'readable', GURUQ_CAT );
+/**
+ * Count questions in the queue
+ *
+ * @return int
+ */
+function guruq_count_queue() {
+	global $wpdb;
 
-	foreach ( $num_posts as $k => $v ) {
-		if ( isset( $guruq_num_posts->$k ) ) {
-			$num_posts->$k = (int) ( $num_posts->$k - $guruq_num_posts->$k );
-		}
-	}
-
-	return $num_posts;
+	$sql = $wpdb->prepare( "SELECT COUNT( option_name ) FROM $wpdb->options WHERE option_name LIKE %s", 'guruq_%' );
+	return (int) $wpdb->get_var( $sql );
 }
-//add_filter( 'count_posts', 'guruq_filter_count_posts' );
+
+/**
+ * Return items from the queue
+ *
+ * @param array $args
+ * @return array
+ */
+function guruq_get_queue( $args ) {
+	global $wpdb;
+	$defaults = array( 'limit' => 10, 'offset' => 0 );
+	$args = wp_parse_args( $args, $defaults );
+	$limit = (int) $args['limit'];
+	$offset = (int) $args['offset'];
+
+	$sql = $wpdb->prepare( "SELECT option_name, option_value FROM $wpdb->options WHERE option_name LIKE %s ORDER BY option_id ASC LIMIT %d,%d", 'guruq_%', $offset, $limit );
+	return $wpdb->get_results( $sql );
+}
+
+/**
+ * Get specified item from the queue, prefill the default post object
+ *
+ * @param string $key
+ * @return void
+ */
+function get_guruq( $key ) {
+	$_post = get_option( $key );
+	$_REQUEST['post_title'] = $_post->post_title;
+	$_REQUEST['content'] = 'Q: ' . $_post->post_content;
+}
+if ( strstr( $_SERVER['REQUEST_URI'], '/post-new.php' ) && isset( $_GET['guruq'] ) ) {
+	get_guruq( $_GET['guruq'] );
+}
+
+/**
+ * Categorize as GuruQ when post is published
+ *
+ * @param int $post_id
+ * @return void
+ */
+function guruq_categorize( $post_id ) {
+	$cats = wp_get_post_categories( $post_id );
+	$cats[] = GURUQ_ID;
+	wp_set_post_categories( $post_id, $cats );
+}
+add_action( 'publish_post', 'guruq_categorize' );
+
+/**
+ * Delete item from queue when post is published
+ *
+ * @param int $post_id Not used
+ * @return void
+ */
+function guruq_delete_from_queue( $post_id ) {
+	$parts = parse_url( $_SERVER['HTTP_REFERER'] );
+	$q = wp_parse_args( $parts['query'] );
+
+	if ( isset( $q['guruq'] ) ) {
+		delete_option( $q['guruq'] );
+	}
+}
+add_action( 'publish_post', 'guruq_delete_from_queue' );
