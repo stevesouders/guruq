@@ -534,6 +534,7 @@ function guruq_new_post() {
 		$post->post_content = $post_content;
 		$post->author_name = 'Anonymous';
 		$post->author_email = '';
+		$post->author_website = '';
 		$key = 'guruq_' . md5( $post->post_date . '-' . $post->post_title );
 		add_option( $key, $post );
 
@@ -542,19 +543,19 @@ function guruq_new_post() {
 	}
 
 	if( isset( $_GET['action'] ) && 'notify' == $_GET['action'] ) {
-		$name = stripslashes( strip_tags( $_POST['guruq-name'] ) );
-		$email = stripslashes( strip_tags( $_POST['guruq-email'] ) );
+		$name = stripslashes( strip_tags( $_POST['notify-name'] ) );
+		$email = stripslashes( strip_tags( $_POST['notify-email'] ) );
+		$website = stripslashes( strip_tags( $_POST['notify-website'] ) );
 		$guruq_key = $_POST['guruq_key'];
 
 		if ( $post = get_option( $guruq_key ) ) {
 			$post->author_name = $name;
 			$post->author_email = $email;
+			$post->author_website = $website;
 			update_option( $guruq_key, $post );
 		}
 		exit;
 	}
-//exit;
-
 }
 guruq_new_post();
 
@@ -825,7 +826,13 @@ function guruq_get_queue( $args ) {
 function get_guruq( $key ) {
 	$_post = get_option( $key );
 	$_REQUEST['post_title'] = $_post->post_title;
-	$_REQUEST['content'] = 'Q: ' . $_post->post_content;
+	$_REQUEST['content'] = 'Q: ' . $_post->post_content . "\n\n";
+	$_REQUEST['content'] .= '- ' . $_post->author_name;
+
+	if ( isset( $_post->author_website ) && !empty( $_post->author_website ) ) {
+		$website = urldecode( $_post->author_website );
+		$_REQUEST['content'] .= " | $website";
+	}
 }
 if ( strstr( $_SERVER['REQUEST_URI'], '/post-new.php' ) && isset( $_GET['guruq'] ) ) {
 	get_guruq( $_GET['guruq'] );
@@ -869,6 +876,6 @@ function guruq_bulk_delete() {
 		}
 	}
 }
-if ( isset( $_POST['action'] ) && 'bulk_blogs' == $_POST['action'] ) {
+if ( isset( $_POST['action'] ) && 'bulk_action' == $_POST['action'] ) {
 	guruq_bulk_delete();
 }

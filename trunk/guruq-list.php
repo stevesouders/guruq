@@ -30,12 +30,12 @@ $posts = guruq_get_queue( $post_args );
 
 <?php if ( !empty( $posts ) ) { ?>
 <form method="post" action="">
-	<input type="hidden" name="action" value="bulk_blogs"/>
+	<input type="hidden" name="action" value="bulk_action"/>
 
 <div class="tablenav">
 		<div class="alignleft actions">
 			<select name="bulk_action">
-				<option value="-1" selected="selected"><?php _e( 'Bulk Actions' ); ?></option>
+				<option value="-1"><?php _e( 'Bulk Actions' ); ?></option>
 				<option value="delete"><?php _e( 'Delete' ); ?></option>
 			</select>
 
@@ -113,15 +113,6 @@ echo $out;
 	</tbody>
 </table>
 <div class="tablenav">
-		<div class="alignleft actions">
-			<select name="bulk_action">
-				<option value="-1" selected="selected"><?php _e( 'Bulk Actions' ); ?></option>
-				<option value="delete"><?php _e( 'Delete' ); ?></option>
-			</select>
-
-			<input type="submit" value="<?php _e( 'Apply' ); ?>" id="doaction" class="button-secondary action" />
- 		</div><!-- .alignleft .actions -->
-
 <?php
 if ( $page_links )
 	echo "<div class='tablenav-pages'>$page_link_text</div>";
