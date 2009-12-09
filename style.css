@@ -17,6 +17,20 @@ TAGS: guruq
 	width:99%;
 }
 
+.hidden {
+	display:none;
+}
+
+.error {
+	display:block;
+	border:1px solid red;
+	width:250px;
+	background:white;
+	color:black;
+	padding:3px;
+	margin-bottom:3px;
+}
+
 a {
 	color:#247;
 	outline:none;
@@ -1114,4 +1128,8 @@ span.edit-link {
 	font-size:1.2em;
 	font-weight:normal;
 	width:50px;
+}
+
+.entry-date {
+	float:right;
 }
