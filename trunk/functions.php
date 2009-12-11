@@ -847,6 +847,18 @@ if ( strstr( $_SERVER['REQUEST_URI'], '/post-new.php' ) && isset( $_GET['guruq']
 function guruq_categorize( $post_id ) {
 	$cats = wp_get_post_categories( $post_id );
 	$cats[] = GURUQ_ID;
+	$default = get_option( 'default_category' );
+	
+	// Remove the default category from the list
+	foreach ( $cats as $k => $v ) {
+		if ( $default == $v ) {
+			unset( $cats[$k] );
+		}
+	}
+
+	// Sort array to reset indexes, wp_set_post_categories() checks index 0
+	sort( $cats );
+
 	wp_set_post_categories( $post_id, $cats );
 }
 add_action( 'publish_post', 'guruq_categorize' );
@@ -861,11 +873,31 @@ function guruq_delete_from_queue( $post_id ) {
 	$parts = parse_url( $_SERVER['HTTP_REFERER'] );
 	$q = wp_parse_args( $parts['query'] );
 
+	$option = get_option( $q['guruq'] );
+	if ( !empty( $option->author_email ) ) {
+		guruq_notify_user( $post_id, $option->author_email );
+	}
+
 	if ( isset( $q['guruq'] ) ) {
 		delete_option( $q['guruq'] );
 	}
 }
 add_action( 'publish_post', 'guruq_delete_from_queue' );
+
+/**
+ * Send notification email to question author
+ *
+ * @param int $post_id
+ * @param string $email
+ * @return void
+ */
+function guruq_notify_user( $post_id, $email ) {
+	$permalink = get_permalink( $post_id );
+	$message = '';
+	$message .= __( 'Your question has been answered:' ) . "\n\r";
+	$message .= $permalink;
+	wp_mail( $email, __( 'The Guru has answered your question' ), $message );
+}
 
 function guruq_bulk_delete() {
 	if ( 'delete' == $_POST['bulk_action'] ) {
