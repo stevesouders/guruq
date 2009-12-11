@@ -105,7 +105,11 @@ foreach ( $posts as $post ) {
 	<a href='$delete_link'>Delete</a>
 	</td>";
 	$out .= "<td>" . date( $date_format, strtotime( $o->post_date ) ) . "</td>";
-	$out .= "<td>$o->author_name</td>";
+	$email = '';
+	if ( !empty( $o->author_email ) ) {
+		$email = " ($o->author_email)";
+	}
+	$out .= "<td>$o->author_name $email</td>";
 	$out .= "</tr>";
 }
 echo $out;
