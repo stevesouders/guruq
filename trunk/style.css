@@ -761,11 +761,6 @@ form#new_post {
 	margin-top:0;
 }
 
-#postbox label {
-	font-size:1.6em;
-	font-weight:normal;
-}
-
 h1,h2,h3,#postbox label,#help dd {
 	font-family:HelveticaNeue-Light,"Helvetica Neue Light","Helvetica Neue",Helvetica,Arial,sans-serif;
 	font-weight:200;
@@ -774,29 +769,38 @@ h1,h2,h3,#postbox label,#help dd {
 #postbox label {
 	color:#444444;
 	float:left;
-}
-
-#postbox label {
 	display:block;
 	font-size:1.6em;
 	font-weight:normal;
 }
 
-#postbox textarea#posttext {
-	font-size:13px;
-}
-
-#postbox textarea#posttext {
+#postbox #question {
+	font-size:20px;
 	background:#FAFAFA none repeat scroll 0 0;
-	border-color:#D1D1D1;
 	color:#666666;
-}
-
-#postbox textarea#posttext {
-	border:1px solid;
-	font-size:13px;
+	border:1px solid #D1D1D1;
 	margin-bottom:6px;
 	width:96%;
+	padding:3px;
+}
+
+#postbox textarea#details {
+	font-family:HelveticaNeue-Light,"Helvetica Neue Light","Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size:13px;
+	background:#FAFAFA none repeat scroll 0 0;
+	color:#666666;
+	border:1px solid #D1D1D1;
+	margin-bottom:6px;
+	width:96%;
+	padding:3px;
+}
+
+#postbox #question:hover,#postbox #details:hover,#postbox #question:focus,#postbox #details:focus {
+	background:#FFFFFF none repeat scroll 0 0;
+}
+
+#searchform #s:hover,#searchform #s:hover {
+	background:#FFFFFF none repeat scroll 0 0;
 }
 
 div.hentry div.entry-content table td,div.hentry div.entry-content table th {
@@ -1042,9 +1046,13 @@ span.edit-link {
 }
 
 #searchform #s {
-	width:96%;
-	margin:0 0 6px;
 	font-size:30px;
+	background:#FAFAFA none repeat scroll 0 0;
+	color:#666666;
+	border:1px solid #D1D1D1;
+	margin-bottom:6px;
+	width:96%;
+	padding:3px;
 }
 
 #search-question-wrap {
@@ -1075,6 +1083,20 @@ span.edit-link {
 }
 
 #ask-submit {
+	float:right;
+	margin-right:20px;
+}
+
+#ask-message {
+	background-color:#FFFFE0;
+	border:1px solid #E6DB55;
+	margin:0 0 6px;
+	padding:3px;
+	width:96%;
+	display:none;
+}
+
+#email-submit {
 	float:right;
 	margin-right:20px;
 }

@@ -17,6 +17,9 @@ jQuery(document).ready(function(){
 		});
 	});
 
+var q_default = 'Ask your question';
+var d_default = 'More details...';
+
 	$j("#ask-submit").click(function() { 
 		$j('form#new_post .error').remove();
 		var hasError = false;
@@ -34,14 +37,18 @@ jQuery(document).ready(function(){
 					hasError = true;
 				}
 			}
+			if(jQuery.trim($j(this).val()) == q_default) {
+				var labelText = $j(this).prev('label').text();
+				$j(this).parent().append('<span class="error">You forgot to enter your '+labelText+'.</span>');
+				hasError = true;
+			}
 		});
 
 		if( !hasError ) {
 			var dataString = $j("#new_post").serialize();
 			//alert (dataString);return false;
 
-			$j('#ask-submit').fadeOut('fast');
-			$j('#posttext').fadeOut('fast');
+			$j('#guruq-ask').fadeOut('fast');
 			$j('#postbox h2').fadeOut('fast');
 
 			$j.ajax({
@@ -91,16 +98,18 @@ jQuery(document).ready(function(){
 				url: "?action=notify",
 				data: dataString,
 				success: function() {
-					$j('#guruq-email').html("<div id='message'></div>");
-					$j('#notify-name').fadeOut('fast');
-					$j('#notify-email').fadeOut('fast');
-					$j('#email-submit').fadeOut('fast');
-					
-					$j('#ask-submit').fadeIn('fast');
-					$j('#posttext').val('');
-					$j('#posttext').fadeIn('fast');
+					$j('#guruq-email').fadeOut('fast');					
+
+					$j('#ask-message').fadeIn('fast');
+					$j('#ask-message').append( 'Your question has been submitted:' + $j('#question').val() );
+
+					$j('#guruq-ask').fadeIn('fast');
+					$j('#question').val(q_default);
+					$j('#details').val(d_default);
 					$j('#postbox h2').fadeIn('fast');
 
+					$j('#ask-message').fadeTo('slow', 1).animate({opacity: 1.0}, 3000).fadeTo('slow', 0);  
+					$j('#ask-message').fadeOut('fast');
 				}
 			  });
 
