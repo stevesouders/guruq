@@ -517,16 +517,22 @@ define( 'GURUQ_FEAT_CAT', 'GuruQ Featured Questions' );
 define( 'GURUQ_FEAT_SLUG', 'guruq-featured-questions' );
 define( 'GURUQ_FEAT_ID', guruq_check_category( GURUQ_FEAT_CAT ) );
 
+define( 'Q_DEFAULT', 'Ask your question' );
+define( 'D_DEFAULT', 'More details...' );
+
 /**
  * Add new question into the queue
  */
 function guruq_new_post() {
 	if( isset( $_GET['action'] ) && 'post' == $_GET['action'] ) {
-		$post_content = $_POST['posttext'];
+		$post_content = stripslashes( strip_tags( $_POST['details'] ) );
 		if ( empty( $post_content ) )
 			return;
+		if ( D_DEFAULT == $post_content )
+			$post_content = '';
 
-		$post_title = guruq_title_from_content( $post_content );
+		//$post_title = guruq_title_from_content( $post_content );
+		$post_title = stripslashes( strip_tags( $_POST['question'] ) );
 
 		$post = new stdClass();
 		$post->post_title = $post_title;
@@ -826,7 +832,7 @@ function guruq_get_queue( $args ) {
 function get_guruq( $key ) {
 	$_post = get_option( $key );
 	$_REQUEST['post_title'] = $_post->post_title;
-	$_REQUEST['content'] = 'Q: ' . $_post->post_content . "\n\n";
+	$_REQUEST['content'] = $_post->post_content . "\n\n";
 	$_REQUEST['content'] .= '- ' . $_post->author_name;
 
 	if ( isset( $_post->author_website ) && !empty( $_post->author_website ) ) {
