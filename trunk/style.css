@@ -1,11 +1,11 @@
 /*
 THEME NAME: GuruQ
 THEME URI: http://guruq.org
-DESCRIPTION: 
-VERSION: 1.0 beta
+DESCRIPTION: Visitors can post questions to a Guru. The Guru can answer the questions via a WordPress admin screen.
+VERSION: 0.1
 AUTHOR: Automattic
 AUTHOR URI: http://automattic.com/
-TAGS: guruq
+TAGS: guruq, one-column, fixed-width
 */
 * {
 	margin:0;
