@@ -660,7 +660,8 @@ function guruq_api_call() {
 	if ( 'xml' == $format ) {
 		header('Content-type: text/plain');
 		$bloginfo_charset = get_bloginfo( 'charset' );
-		$xml .= '<?xml version="1.0" encoding="' . $bloginfo_charset . '"?>' . "\n";
+		$xml .= '<';
+		$xml .= '?xml version="1.0" encoding="' . $bloginfo_charset . '"?>' . "\n";
 		$xml .= "<items>\n";
 		$xml .= guruq_obj2xml( $posts );
 		$xml .= "</items>\n";
