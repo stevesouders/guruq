@@ -5,11 +5,25 @@ DESCRIPTION: Visitors can post questions to a Guru. The Guru can answer the ques
 VERSION: 0.1
 AUTHOR: Automattic
 AUTHOR URI: http://automattic.com/
-TAGS: guruq, one-column, fixed-width
+TAGS: one-column, fixed-width
 */
 * {
 	margin:0;
 	padding:0;
+}
+
+.aligncenter {
+	display:block;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+.alignleft {
+	float:left;
+}
+
+.alignright {
+	float:right;
 }
 
 .clearer {
