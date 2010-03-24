@@ -453,13 +453,26 @@ function widget_sandbox_rsslinks_control() {
 
 // Widgets plugin: intializes the plugin after the widgets above have passed snuff
 function sandbox_widgets_init() {
+	if ( !function_exists('register_sidebars') )
+		return;
+
+	// Formats the Sandbox widgets, adding readability-improving whitespace
+	$p = array(
+		'before_widget'  =>   "\n\t\t\t" . '<li id="%1$s" class="widget %2$s">',
+		'after_widget'   =>   "\n\t\t\t</li>\n",
+		'before_title'   =>   "\n\t\t\t\t". '<h3 class="widgettitle">',
+		'after_title'    =>   "</h3>\n"
+	);
+
+	// Table for how many? Two? This way, please.
+	register_sidebars( 1, $p );
 }
 
 // Translate, if applicable
 load_theme_textdomain('sandbox');
 
 // Runs our code at the end to check that everything needed has loaded
-//add_action( 'init', 'sandbox_widgets_init' );
+add_action( 'init', 'sandbox_widgets_init' );
 
 // Registers our function to filter default gallery shortcode
 add_filter( 'post_gallery', 'sandbox_gallery', 10, 2 );
