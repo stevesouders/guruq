@@ -1,15 +1,15 @@
 //<![CDATA[
-var $j = jQuery.noConflict();
+var $ = jQuery.noConflict();
 jQuery(document).ready(function(){
-	$j(function() {
-		$j("#accordion1").accordion({ 
+	$(function() {
+		$("#accordion1").accordion({ 
 			header: 'h3', 
 			autoHeight: false, 
 			collapsible: true, 
 			active: false 
 		});
 		
-		$j("#accordion2").accordion({ 
+		$("#accordion2").accordion({ 
 			header: 'h3', 
 			autoHeight: false, 
 			collapsible: true, 
@@ -20,46 +20,52 @@ jQuery(document).ready(function(){
 var q_default = 'Ask your question';
 var d_default = 'More details...';
 
-	$j("#ask-submit").click(function() { 
-		$j('form#new_post .error').remove();
+	$("#ask-submit").click(function() { 
+		$('form#new_post .error').remove();
 		var hasError = false;
 
-		$j('.required1').each(function() {
-			if(jQuery.trim($j(this).val()) == '') {
-				var labelText = $j(this).prev('label').text();
-				$j(this).parent().append('<span class="error">You forgot to enter your '+labelText+'.</span>');
+		$('.required1').each(function() {
+			if(jQuery.trim($(this).val()) == '') {
+				var labelText = $(this).prev('label').text();
+				$(this).parent().append('<span class="error">You forgot to enter your '+labelText+'.</span>');
 				hasError = true;
-			} else if($j(this).hasClass('email')) {
+			} else if($(this).hasClass('email')) {
 				var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-				if(!emailReg.test(jQuery.trim($j(this).val()))) {
-					var labelText = $j(this).prev('label').text();
-					$j(this).parent().append('<span class="error">You entered an invalid '+labelText+'.</span>');
+				if(!emailReg.test(jQuery.trim($(this).val()))) {
+					var labelText = $(this).prev('label').text();
+					$(this).parent().append('<span class="error">You entered an invalid '+labelText+'.</span>');
 					hasError = true;
 				}
 			}
-			if(jQuery.trim($j(this).val()) == q_default) {
-				var labelText = $j(this).prev('label').text();
-				$j(this).parent().append('<span class="error">You forgot to enter your '+labelText+'.</span>');
+			if(jQuery.trim($(this).val()) == q_default) {
+				var labelText = $(this).prev('label').text();
+				$(this).parent().append('<span class="error">You forgot to enter your '+labelText+'.</span>');
 				hasError = true;
 			}
 		});
 
 		if( !hasError ) {
-			var dataString = $j("#new_post").serialize();
+			var dataString = $("#new_post").serialize();
 			//alert (dataString);return false;
 
-			$j('#guruq-ask').fadeOut('fast');
-			$j('#postbox h2').fadeOut('fast');
+			$('#guruq-ask').fadeOut('fast');
+			$('#postbox h2').fadeOut('fast');
 
-			$j.ajax({
+			$.ajax({
 				type: "POST",
 				url: "?action=post",
 				data: dataString,
 				success: function( data, status ) {
 					var guruq_key = data;
-					$j("#guruq_key").val(data);
+					$("#guruq_key").val(data);
 
-					$j('#guruq-email').fadeIn('fast');
+					$('#ask-message').fadeIn('fast');
+					$('#ask-message').append( 'Your question has been submitted: ' + $('#question').val() );
+
+					$('#guruq-email').fadeIn('fast');
+
+					$('#ask-message').fadeTo('slow', 1).animate({opacity: 1.0}, 3000).fadeTo('slow', 0);  
+					$('#ask-message').fadeOut('fast');
 				}
 			  });
 
@@ -70,46 +76,25 @@ var d_default = 'More details...';
 	});
 
 
-	$j("#email-submit").click(function() { 
-		$j('form#new_post .error').remove();
+	$("#email-submit").click(function() { 
+		$('form#new_post .error').remove();
 		var hasError = false;
 
-		$j('.required2').each(function() {
-			if(jQuery.trim($j(this).val()) == '') {
-				var labelText = $j(this).prev('label').text();
-				$j(this).parent().append('<span class="error">You forgot to enter your '+labelText+'.</span>');
-				hasError = true;
-			} else if($j(this).hasClass('email')) {
-				var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-				if(!emailReg.test(jQuery.trim($j(this).val()))) {
-					var labelText = $j(this).prev('label').text();
-					$j(this).parent().append('<span class="error">You entered an invalid '+labelText+'.</span>');
-					hasError = true;
-				}
-			}
-		});
-
 		if( !hasError ) {
-			var dataString = $j("#new_post").serialize();
+			var dataString = $("#new_post").serialize();
 			//alert (dataString);return false;
 
-			$j.ajax({
+			$.ajax({
 				type: "POST",
 				url: "?action=notify",
 				data: dataString,
 				success: function() {
-					$j('#guruq-email').fadeOut('fast');					
+					$('#guruq-email').fadeOut('fast');					
 
-					$j('#ask-message').fadeIn('fast');
-					$j('#ask-message').append( 'Your question has been submitted:' + $j('#question').val() );
-
-					$j('#guruq-ask').fadeIn('fast');
-					$j('#question').val(q_default);
-					$j('#details').val(d_default);
-					$j('#postbox h2').fadeIn('fast');
-
-					$j('#ask-message').fadeTo('slow', 1).animate({opacity: 1.0}, 3000).fadeTo('slow', 0);  
-					$j('#ask-message').fadeOut('fast');
+					$('#guruq-ask').fadeIn('fast');
+					$('#question').val(q_default);
+					$('#details').val(d_default);
+					$('#postbox h2').fadeIn('fast');
 				}
 			  });
 
