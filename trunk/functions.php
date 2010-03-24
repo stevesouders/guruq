@@ -453,50 +453,13 @@ function widget_sandbox_rsslinks_control() {
 
 // Widgets plugin: intializes the plugin after the widgets above have passed snuff
 function sandbox_widgets_init() {
-	if ( !function_exists('register_sidebars') )
-		return;
-
-	// Formats the Sandbox widgets, adding readability-improving whitespace
-	$p = array(
-		'before_widget'  =>   "\n\t\t\t" . '<li id="%1$s" class="widget %2$s">',
-		'after_widget'   =>   "\n\t\t\t</li>\n",
-		'before_title'   =>   "\n\t\t\t\t". '<h3 class="widgettitle">',
-		'after_title'    =>   "</h3>\n"
-	);
-
-	// Table for how many? Two? This way, please.
-	register_sidebars( 2, $p );
-
-	// Finished intializing Widgets plugin, now let's load the Sandbox default widgets; first, Sandbox search widget
-	$widget_ops = array(
-		'classname'    =>  'widget_search',
-		'description'  =>  __( "A search form for your blog (Sandbox)", "sandbox" )
-	);
-	wp_register_sidebar_widget( 'search', __( 'Search', 'sandbox' ), 'widget_sandbox_search', $widget_ops );
-	unregister_widget_control('search'); // We're being Sandbox-specific; remove WP default
-	wp_register_widget_control( 'search', __( 'Search', 'sandbox' ), 'widget_sandbox_search_control' );
-
-	// Sandbox Meta widget
-	$widget_ops = array(
-		'classname'    =>  'widget_sandbox_meta',
-		'description'  =>  __( "Log in/out and administration links (Sandbox)", "sandbox" )
-	);
-	wp_register_sidebar_widget( 'sandbox_meta', __( 'Sandbox Meta', 'sandbox' ), 'widget_sandbox_meta', $widget_ops );
-
-	//Sandbox RSS Links widget
-	$widget_ops = array(
-		'classname'    =>  'widget_rss_links',
-		'description'  =>  __( "RSS links for both posts and comments (Sandbox)", "sandbox" )
-	);
-	wp_register_sidebar_widget( 'rss_links', __( 'RSS Links', 'sandbox' ), 'widget_sandbox_rsslinks', $widget_ops );
-	wp_register_widget_control( 'rss_links', __( 'RSS Links', 'sandbox' ), 'widget_sandbox_rsslinks_control' );
 }
 
 // Translate, if applicable
 load_theme_textdomain('sandbox');
 
 // Runs our code at the end to check that everything needed has loaded
-add_action( 'init', 'sandbox_widgets_init' );
+//add_action( 'init', 'sandbox_widgets_init' );
 
 // Registers our function to filter default gallery shortcode
 add_filter( 'post_gallery', 'sandbox_gallery', 10, 2 );
