@@ -623,12 +623,17 @@ function guruq_api_call() {
 		return;
 
 	foreach ( $posts as $id => $post ) {
+		$post->permalink = get_permalink( $post->ID );
 		$posts[$id] = guruq_filter_post( $post );
 	}
 
 	if ( 'json' == $format ) {
 		//header('Content-type: application/json');
-		echo json_encode( $posts );
+		if ( isset( $_GET['callback'] ) ) {
+			echo $_GET['callback'] . "(" . json_encode( $posts ) . ");";
+		} else {
+			echo json_encode( $posts );
+		}
 		exit();
 	}
 
@@ -656,7 +661,7 @@ guruq_api_call();
 function guruq_filter_post( $post ) {
 	$_post = new stdClass();
 	$members = array( 'ID', 'post_author', 'post_date', 'post_date_gmt', 'post_content', 'post_title', 'post_name', 
-	'post_modified', 'post_modified_gmt', 'post_parent', 'guid' );
+	'post_modified', 'post_modified_gmt', 'post_parent', 'guid', 'permalink' );
 
 	foreach ( $members as $member ) {
 		if ( isset( $post->$member ) )
