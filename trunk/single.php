@@ -11,6 +11,7 @@
 			</div>
 
 			<div id="post-<?php the_ID() ?>" class="<?php sandbox_post_class() ?>">
+			<a href="#" name="post"></a>
 				<h2 class="entry-title"><?php the_title() ?></h2>
 				<div class="entry-content">
 <?php the_content() ?>
